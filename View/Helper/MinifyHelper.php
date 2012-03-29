@@ -1,15 +1,11 @@
 <?php
 
-$pp = CakePlugin::path('Fmweb') . 'Vendor' .DS. 'Compressor' .DS;
-App::build(array(
-	'Vendor' => array($pp),
-	));
 App::uses('JSMin', 'Vendor');
-App::import('Vendor', 'Fmweb.Compressor_Minify_CSS_Compressor', array(
-	'file' => 'Compressor/Minify/CSS/Compressor.php',
+App::import('Vendor', 'Minify.Minify_CSS_Compressor', array(
+	'file' => 'minify/min/lib/Minify/CSS/Compressor.php',
 	));
 
-class MinifyHelper extends FmwebHelper {
+class MinifyHelper extends AppHelper {
 
 	public $helpers = array(
 		'Html',
@@ -20,7 +16,7 @@ class MinifyHelper extends FmwebHelper {
 	 * @param array $options theme
 	 */
 	public function script($scripts, $options = array()) {
-		if (Configure::read('debug') || Configure::read('Fmweb.minify') === false) {
+		if (Configure::read('debug') || Configure::read('Minify.minify') === false) {
 			return $this->Html->script($scripts);
 		}
 		$options = Set::merge(array(
@@ -30,6 +26,7 @@ class MinifyHelper extends FmwebHelper {
 			), $options);
 		extract($options);
 
+		$path = APP;
 		if (!empty($theme)) {
 			$path = App::themePath($theme);
 		} elseif (!empty($plugin)) {
@@ -37,7 +34,7 @@ class MinifyHelper extends FmwebHelper {
 		}
 
 		$targetDirectory = $path .DS. 'webroot' .DS. 'js' .DS;
-		$outputfile = $targetDirectory .DS. $subdir .DS. 'minified-' . sha1(join(':', $scripts)) . '.js';
+		$outputfile = $targetDirectory . $subdir .DS. 'minified-' . sha1(join(':', $scripts)) . '.js';
 
 		if (file_exists($outputfile)) {
 			$outputfile = str_replace($targetDirectory . '/', '', $outputfile);
@@ -63,7 +60,7 @@ class MinifyHelper extends FmwebHelper {
 	 * @param array $options theme
 	 */
 	public function css($scripts, $options = array()) {
-		if (Configure::read('debug') || Configure::read('Fmweb.minify') === false) {
+		if (Configure::read('debug') || Configure::read('Minify.minify') === false) {
 			return $this->Html->css($scripts);
 		}
 		$options = Set::merge(array(
@@ -73,6 +70,7 @@ class MinifyHelper extends FmwebHelper {
 			), $options);
 		extract($options);
 
+		$path = APP;
 		if (!empty($theme)) {
 			$path = App::themePath($theme);
 		} elseif (!empty($plugin)) {
@@ -80,7 +78,8 @@ class MinifyHelper extends FmwebHelper {
 		}
 
 		$targetDirectory = $path .DS. 'webroot' .DS. 'css' .DS;
-		$outputfile = $targetDirectory .DS. $subdir .DS. 'minified-' . sha1(join(':', $scripts)) . '.css';
+		$outputfile = $targetDirectory . $subdir .DS. 'minified-' . sha1(join(':', $scripts)) . '.css';
+
 
 		if (file_exists($outputfile)) {
 			$outputfile = str_replace($targetDirectory . '/', '', $outputfile);
