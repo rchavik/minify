@@ -37,7 +37,7 @@ class MinifyHelper extends AppHelper {
 		$outputfile = $targetDirectory . $subdir .DS. 'minified-' . sha1(join(':', $scripts)) . '.js';
 
 		if (file_exists($outputfile)) {
-			$outputfile = str_replace($targetDirectory . '/', '', $outputfile);
+			$outputfile = str_replace($targetDirectory, '', $outputfile);
 			return $this->Html->script($outputfile);
 		}
 
@@ -82,7 +82,7 @@ class MinifyHelper extends AppHelper {
 
 
 		if (file_exists($outputfile)) {
-			$outputfile = str_replace($targetDirectory . '/', '', $outputfile);
+			$outputfile = str_replace($targetDirectory, '', $outputfile);
 			return $this->Html->css($outputfile);
 		}
 
