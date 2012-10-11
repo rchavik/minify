@@ -17,7 +17,7 @@ class MinifyHelper extends AppHelper {
 	 */
 	public function script($scripts, $options = array()) {
 		if (Configure::read('debug') || Configure::read('Minify.minify') === false) {
-			return $this->Html->script($scripts);
+			return $this->Html->script($scripts, $options);
 		}
 		$options = Set::merge(array(
 			'theme' => $this->_View->theme,
@@ -42,11 +42,11 @@ class MinifyHelper extends AppHelper {
 
 		if (file_exists($outputfile)) {
 			if ($plugin) {
-				$outputfile = '/' . $plugin . '/js/' . basename($outputfile);
+				$outputfile = '/' . Inflector::underscore(strtolower($plugin)) . '/js/' . basename($outputfile);
 			} else {
 				$outputfile = str_replace($targetDirectory, '', $outputfile);
 			}
-			return $this->Html->script($outputfile);
+			return $this->Html->script($outputfile, $options);
 		}
 
 		$contents = '';
@@ -60,12 +60,15 @@ class MinifyHelper extends AppHelper {
 			if (!preg_match('/\.js$/', $file)) {
 				$file .= '.js';
 			}
+			if (!empty($options['plugin'])) {
+				$file = preg_replace('/' . Inflector::underscore(strtolower($options['plugin'])) . '\/js/', '', $file);
+			}
 			$contents .= ";\r" . file_get_contents($file);
 		}
 		$contents = JSMin::minify($contents);
 		file_put_contents($outputfile, $contents);
 
-		return $this->Html->script($scripts);
+		return $this->Html->script($scripts, $options);
 	}
 
 	/**
