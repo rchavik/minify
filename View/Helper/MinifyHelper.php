@@ -63,6 +63,7 @@ class MinifyHelper extends AppHelper {
 			if (!empty($options['plugin'])) {
 				$file = preg_replace('/' . Inflector::underscore(strtolower($options['plugin'])) . '\/js/', '', $file);
 			}
+
 			$contents .= ";\r" . file_get_contents($file);
 		}
 		$contents = JSMin::minify($contents);
@@ -94,7 +95,7 @@ class MinifyHelper extends AppHelper {
 		}
 
 		$targetDirectory = $path .DS. 'webroot' .DS. 'css' .DS;
-		$outputfile = $targetDirectory . $subdir .DS. 'minified-' . sha1(join(':', $scripts)) . '.css';
+		$outputfile = $targetDirectory . $subdir . 'minified-' . sha1(join(':', $scripts)) . '.css';
 
 
 		if (file_exists($outputfile)) {
